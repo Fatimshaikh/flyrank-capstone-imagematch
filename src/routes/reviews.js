@@ -3,7 +3,10 @@ import { pool } from '../db/pool.js';
 
 const router = Router();
 
-// List all suggestions with their guard status — the "inspect why" part
+function isValidId(id) {
+  return /^[0-9]+$/.test(id);
+}
+
 router.get('/suggestions', async (req, res) => {
   const { rows } = await pool.query(`
     SELECT s.id, p.title AS post_title, i.filename, i.species,
@@ -16,11 +19,13 @@ router.get('/suggestions', async (req, res) => {
   res.json(rows);
 });
 
-// Approve or reject a suggestion — the human-in-the-loop step
 router.post('/suggestions/:id/review', async (req, res) => {
   const { id } = req.params;
   const { decision, note } = req.body;
 
+  if (!isValidId(id)) {
+    return res.status(400).json({ error: 'id must be a numeric suggestion ID' });
+  }
   if (!['approve', 'reject'].includes(decision)) {
     return res.status(400).json({ error: 'decision must be "approve" or "reject"' });
   }
@@ -38,9 +43,11 @@ router.post('/suggestions/:id/review', async (req, res) => {
   res.json({ message: `Suggestion ${decision}d`, review: result.rows[0] });
 });
 
-// See the full review trail for a suggestion
 router.get('/suggestions/:id/reviews', async (req, res) => {
   const { id } = req.params;
+  if (!isValidId(id)) {
+    return res.status(400).json({ error: 'id must be a numeric suggestion ID' });
+  }
   const { rows } = await pool.query('SELECT * FROM reviews WHERE suggestion_id = $1 ORDER BY created_at', [id]);
   res.json(rows);
 });

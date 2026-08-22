@@ -51,3 +51,9 @@
 **Approach used:** Never tune a threshold against a single failing case in isolation — always re-validate against the full labeled set, especially the known-negative control case (gardening post), to catch any new false positives the change might introduce.
 **Result:** Top-1 precision improved to 6/6 (100%).
 **Honest caveat:** A 6-post eval set is small; 100% here reflects a well-tuned system for this labeled set, not a guarantee of 100% real-world accuracy. Documented as a known limitation — growing the eval set (per §7's guidance to "grow it slightly") would be the natural next step for more statistically meaningful precision.
+
+## Challenge 8: Invalid ID crashed with raw HTML error instead of clean 4xx
+**What happened:** Testing the review endpoint with a non-numeric ID (typo/placeholder "ID") caused an unhandled Postgres error, returned as a raw HTML stack trace instead of JSON.
+**Why:** No input validation existed on the :id route param before it hit the database query.
+**Fix:** Added isValidId() regex check (numeric only) at the top of both POST /suggestions/:id/review and GET /suggestions/:id/reviews, returning a clean 400 JSON error for bad input.
+**Approach used:** Validate at the boundary — reject malformed input before it reaches business logic or the database, per the shared requirement "bad input → clean 4xx, never a 500."

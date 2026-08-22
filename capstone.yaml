@@ -1,0 +1,31 @@
+name: flyrank-capstone-imagematch
+description: AI Image Understanding & Content Matching Engine
+
+run: docker compose up -d && npm start
+seed: node src/jobs/classifyImages.js && node src/db/seedPosts.js && node src/jobs/normalizeSpecies.js
+test: npm test
+base_url: http://localhost:3000
+
+endpoints:
+  - method: GET
+    path: /health
+    description: Server + database connectivity check
+  - method: GET
+    path: /posts/:id/images
+    description: Ranked image suggestions for a post, with guard verdicts
+  - method: GET
+    path: /posts/:id/check/:filename
+    description: Force-check one specific image against one specific post
+  - method: GET
+    path: /suggestions
+    description: List all logged suggestions with guard status
+  - method: POST
+    path: /suggestions/:id/review
+    description: Approve or reject a suggestion (body: {decision, note})
+  - method: GET
+    path: /suggestions/:id/reviews
+    description: Review trail for a suggestion
+
+eval:
+  script: node eval/runEval.js
+  result_file: eval/results.json

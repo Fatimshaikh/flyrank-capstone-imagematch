@@ -105,3 +105,39 @@ See `BUILDLOG.md` for every bug encountered, why it happened, and how it was fix
 
 **Correct ranked matches** — the fox post returns fox images top-to-bottom, all approved by the guard:
 ![Fox post ranked matches](docs/screenshots/05-fox-post-ranked-matches.png)
+
+## Demo Script (6 beats, rehearsed)
+
+**1. Corpus processed automatically**
+
+docker exec -i flyrank-capstone-imagematch-db-1 psql -U postgres -d imagematch -c "SELECT filename, species, subject, confidence FROM images ORDER BY filename LIMIT 10;"
+
+→ 50 images, each with an AI-derived species, subject, and confidence score. No manual tagging.
+
+**2. Fox article → fox photos rank on top**
+
+curl -s http://localhost:3000/posts/1/images
+
+→ Top 5 candidates are all fox images, similarity 0.72–0.74, all APPROVED by the guard.
+
+**3. Force a wolf onto the fox post → guard refuses it**
+
+curl -s http://localhost:3000/posts/1/check/wolf_01.jpg
+
+→ `{"guard":{"status":"REJECTED","reason":"Species mismatch: expected fox, detected wolf"}}`
+
+**4. No relevant image exists → honest refusal, not a guess**
+
+curl -s http://localhost:3000/posts/6/images
+
+→ Gardening post, every one of the 5 nearest candidates individually rejected (similarity 0.52–0.53, below the 0.58 threshold), final response: `"No confident match found."`
+
+**5. Human review — approve and reject, both logged**
+
+curl -s -X POST http://localhost:3000/suggestions/11/review -H "Content-Type: application/json" -d '{"decision":"reject","note":"Correctly refused, no relevant image exists"}'
+curl -s -X POST http://localhost:3000/suggestions/10/review -H "Content-Type: application/json" -d '{"decision":"approve","note":"Confirmed correct fox match"}'
+
+→ Both decisions written to the `reviews` table with timestamps — a permanent audit trail.
+
+**6. Closing line**
+"Top-1 precision: 100% on our labeled eval set — measured, not guessed. Good suggestions when confident, safe rejection when uncertain. That's production AI."

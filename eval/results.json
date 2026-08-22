@@ -1,0 +1,49 @@
+{
+  "precision": 1,
+  "correct": 6,
+  "total": 6,
+  "results": [
+    {
+      "post": "The Secret Life of Red Foxes",
+      "expected": "fox",
+      "predicted": "fox",
+      "predictedFile": "fox_07.jpg",
+      "correct": true
+    },
+    {
+      "post": "Understanding Wolf Pack Behavior",
+      "expected": "wolf",
+      "predicted": "wolf",
+      "predictedFile": "wolf_06.jpg",
+      "correct": true
+    },
+    {
+      "post": "Why Dogs Became Our Best Friends",
+      "expected": "dog",
+      "predicted": "dog",
+      "predictedFile": "dog_10.jpg",
+      "correct": true
+    },
+    {
+      "post": "Grizzly and Polar Bears: Giants of the Wild",
+      "expected": "bear",
+      "predicted": "bear",
+      "predictedFile": "bear_06.jpg",
+      "correct": true
+    },
+    {
+      "post": "The Graceful World of Deer",
+      "expected": "deer",
+      "predicted": "deer",
+      "predictedFile": "deer_01.jpg",
+      "correct": true
+    },
+    {
+      "post": "Building a Backyard Vegetable Garden",
+      "expected": null,
+      "predicted": null,
+      "predictedFile": null,
+      "correct": true
+    }
+  ]
+}

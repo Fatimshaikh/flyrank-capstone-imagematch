@@ -1,0 +1,8 @@
+[
+  { "post_id": 1, "post_title": "The Secret Life of Red Foxes", "expected_species": "fox" },
+  { "post_id": 2, "post_title": "Understanding Wolf Pack Behavior", "expected_species": "wolf" },
+  { "post_id": 3, "post_title": "Why Dogs Became Our Best Friends", "expected_species": "dog" },
+  { "post_id": 4, "post_title": "Grizzly and Polar Bears: Giants of the Wild", "expected_species": "bear" },
+  { "post_id": 5, "post_title": "The Graceful World of Deer", "expected_species": "deer" },
+  { "post_id": 6, "post_title": "Building a Backyard Vegetable Garden", "expected_species": null }
+]

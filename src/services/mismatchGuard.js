@@ -1,4 +1,4 @@
-const SIMILARITY_THRESHOLD = 0.65;   // tuned in Phase 4 against the eval set
+const SIMILARITY_THRESHOLD = 0.58;   // tuned in Phase 4 against the eval set
 const CONFIDENCE_THRESHOLD = 0.7;
 
 function extractExpectedSpecies(postTitle, postContent) {

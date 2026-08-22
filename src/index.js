@@ -1,9 +1,11 @@
 import 'dotenv/config';
 import express from 'express';
 import { pool } from './db/pool.js';
+import imagesRouter from './routes/images.js';
 
 const app = express();
 app.use(express.json());
+app.use('/', imagesRouter);
 
 app.get('/health', async (req, res) => {
   try {

@@ -36,3 +36,10 @@
 **Fix:** Added a new `species` column, populated by a normalization job that keyword-matches the AI's `subject` field against our 5 known categories (fox/wolf/dog/bear/deer), with a fallback to the filename prefix (our own ground-truth labels from corpus collection) if no keyword matches.
 **Approach used:** Kept the AI's raw output (subject, category) untouched in its original columns for transparency/debugging, and added species as a separate derived field — never overwrite raw AI output, always derive cleaned fields alongside it.
 **Interesting finding:** wolf_02.jpg's subject was genuinely classified as "dog" by Gemini itself (not a normalization bug) — a real vision-model limitation worth acknowledging honestly at demo time, showing the mismatch guard's value even against imperfect upstream classification.
+
+## Challenge 6: Mismatch guard gave the wrong rejection reason for the flagship wolf/fox test
+**What happened:** Forcing wolf_01.jpg as a candidate for the fox post was correctly REJECTED, but with reason "Similarity too low" instead of the expected "Species mismatch" — technically correct but missing the point of the demo.
+**Why:** The guard checked similarity threshold before checking species match, so whichever check failed first "won," even when species mismatch was the more meaningful, categorical reason.
+**Fix:** Reordered the guard's checks so species/category mismatch is evaluated first (a hard categorical rule), then confidence, then similarity threshold last (a soft numeric rule).
+**Approach used:** Ranked checks from "most categorically certain" to "most numerically fuzzy" — a wrong species should never be excused by a coincidentally low similarity score; the rejection reason should reflect the real reason a human would give.
+**Result:** POST /posts/1/check/wolf_01.jpg now returns reason: "Species mismatch: expected fox, detected wolf" — matching the brief's exact target scenario from §3.

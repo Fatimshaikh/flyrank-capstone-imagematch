@@ -88,3 +88,20 @@ Node.js + Express · PostgreSQL (Docker) · Gemini 3.5 Flash Lite (vision) + Gem
 ## Full build log
 
 See `BUILDLOG.md` for every bug encountered, why it happened, and how it was fixed — 7 documented challenges from project setup through threshold tuning.
+
+## Screenshots
+
+**All 14 automated tests passing** — schema validation, mismatch guard logic, and similarity ranking math:
+![Tests passing](docs/screenshots/01-tests-passing.png)
+
+**Top-1 precision evaluation** — 6/6 correct on the labeled eval set, including the gardening post correctly returning no match:
+![Eval precision report](docs/screenshots/02-eval-precision.png)
+
+**The flagship mismatch guard moment** — a wolf photo forced onto a fox post, correctly rejected with the exact reason:
+![Wolf rejected on fox post](docs/screenshots/03-mismatch-guard-wolf-rejected.png)
+
+**Honest "no confident match" response** — a gardening post with no relevant images in the corpus; every candidate rejected with a clear reason instead of a forced bad guess:
+![No confident match](docs/screenshots/04-no-confident-match.png)
+
+**Correct ranked matches** — the fox post returns fox images top-to-bottom, all approved by the guard:
+![Fox post ranked matches](docs/screenshots/05-fox-post-ranked-matches.png)

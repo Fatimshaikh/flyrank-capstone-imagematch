@@ -29,3 +29,10 @@
 **Approach used:** Cheap, incremental testing (1 image) before expensive testing (50 images) to avoid wasting free-tier quota while debugging. Chose to trust the API's own model list over guessing/hardcoding names from memory or docs, since these change faster than documentation.
 **Lesson:** For any free-tier AI integration, always verify current model availability and quotas live via the provider's own endpoints rather than trusting a model name from a tutorial — free-tier offerings change frequently.
 **Interesting data point:** wolf_02.jpg was classified as "dog" by the vision model — flagged as a case to examine when building the labeled eval set in Phase 4 (either a genuinely dog-like wolf photo, or a real misclassification worth understanding).
+
+## Challenge 5: Gemini's free-text "category" field was too inconsistent to use for the guard
+**What happened:** After classifying all 50 images, querying GROUP BY category returned 16 different values (e.g. "mammal", "Animal", "wildlife photography", "horror and thriller") for only 5 real animal types — unusable for a reliable comparison in the mismatch guard.
+**Why:** Gemini's category field is free text, not a constrained enum, so wording varies call to call even for the same animal type.
+**Fix:** Added a new `species` column, populated by a normalization job that keyword-matches the AI's `subject` field against our 5 known categories (fox/wolf/dog/bear/deer), with a fallback to the filename prefix (our own ground-truth labels from corpus collection) if no keyword matches.
+**Approach used:** Kept the AI's raw output (subject, category) untouched in its original columns for transparency/debugging, and added species as a separate derived field — never overwrite raw AI output, always derive cleaned fields alongside it.
+**Interesting finding:** wolf_02.jpg's subject was genuinely classified as "dog" by Gemini itself (not a normalization bug) — a real vision-model limitation worth acknowledging honestly at demo time, showing the mismatch guard's value even against imperfect upstream classification.
